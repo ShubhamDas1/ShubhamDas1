@@ -1,0 +1,46 @@
+import numpy as np                            #importing libraries
+import pandas as pd
+import matplotlib.pyplot as plt 
+import statsmodels.api as sm
+
+df = pd.read_csv("http://bit.ly/w-data")         #reading the dataset in dataframe
+df.head()
+
+df.shape                                       # shape of data set shows 25 records and two columns including the target
+
+plt.scatter(df.Hours,df.Scores)  # scatter plot to visualise the trend of dependant vs independant variable
+plt.xlabel("Hours of study")
+plt.ylabel("Score out of 100 or Percentage")
+plt.title("Study hours vs Performance of student")
+plt.show()
+
+#Here in we see a linear relationship between the hours of study and the percentage scored by the student and since we have just two variables a simple linear 
+#regression model or Ordinary Least Square fit should give us the best fit line for the requested result.
+
+x = df.Hours          #independant variable
+y = df.Scores         #dependant variable
+
+xc = sm.add_constant(x) #adding constant variable 1.0
+
+LR_model = sm.OLS(y,xc)    #Ordinary Least Square model
+results = LR_model.fit()   # fitting model
+
+results.summary()          #summary report
+
+X1 = np.array(9.25)
+
+Y1 = results.params[1]*X1 + results.params[0]  #Y1 = 9.7758*X1 + 2.4837 simple linear equation for the given dataset
+
+plt.figure(figsize=(7,7))
+plt.style.use('seaborn-whitegrid')
+plt.plot(x, y_predict,'red')     #plot to visualise the best fit line for dependant vs independant variable
+plt.plot(X1,Y1, color='green', marker='*', markersize=8) #point marked as star for performance in 9.25 study hours
+plt.plot([X1,X1],[0,Y1], '--',color='green')
+plt.plot([0,X1],[Y1,Y1],'--', color='green')
+plt.scatter(df.Hours,df.Scores)  
+plt.xlabel("Hours of study")
+plt.ylabel("Score out of 100 or Percentage")
+plt.title("Study hours vs Performance of student")
+plt.show()
+
+print(f"If a student studies for {X1} hours, he/she is expected to score {round(Y1,2)} percentage")
